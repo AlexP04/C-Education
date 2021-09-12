@@ -1,0 +1,33 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int main()
+{
+	const int base = 10;
+	int number;
+	vector<int> digits;
+	int digit;
+
+	cout << "Enter number to reverse:" << endl;
+	cin >> number;
+
+
+	do {
+		digit = number % base;
+		digits.push_back(digit);
+		number = number/base;
+	} while (number >= base);
+
+	int result = 0;
+
+	for (int i = 0; i < digits.size(); i++) {
+		result += digits[i] * pow(base, digits.size() - i);
+
+	}
+
+	cout <<"Result: "<< result << endl;
+
+}
+
