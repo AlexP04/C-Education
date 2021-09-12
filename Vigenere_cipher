@@ -1,0 +1,78 @@
+#include <iostream>
+#include <map>
+#include <string>
+#include <ctype.h>
+
+using namespace std;
+
+map<char,int> Vigenere_cipher;
+map<int, char> reverse_Vigenere_cipher;
+string key_word;
+
+
+void crypt(string& str, bool encrypt ) {
+	int i = 0, j = 0; 
+	while(i < str.size()){
+		if (!isalpha(str[i])){
+			i++;
+		}
+		else {
+			if (!isalpha(key_word[j%key_word.size()])) {
+				j++;
+			}
+			else {
+				int symb_code;
+				if (encrypt) {
+					symb_code = Vigenere_cipher.find(tolower(str[i]))->second + 
+						Vigenere_cipher.find(tolower(key_word[j%key_word.size()]))->second;
+				}
+				else {
+					symb_code = Vigenere_cipher.find(tolower(str[i]))->second + 
+						Vigenere_cipher.size() - Vigenere_cipher.find(tolower(key_word[j%key_word.size()]))->second;
+				}
+				
+				symb_code %= Vigenere_cipher.size();
+				str[i] = reverse_Vigenere_cipher.find(symb_code)->second;
+				i++;
+				j++;
+			}
+		}
+	}
+}
+
+
+int main(){
+
+	{
+		int i = 0;
+		for (char symb = 'a'; symb <= 'z'; symb++) {
+			Vigenere_cipher[symb] = i;
+			reverse_Vigenere_cipher[i] = symb;
+			i++;
+		}
+		
+	}
+	
+	cout << "Enter key word:" << endl;
+	cout << endl;
+	getline(cin, key_word, '\n');
+
+	string text;
+	cout << "Enter text: " << endl;
+	cout << endl;
+	getline(cin, text,'\n');
+	
+	crypt(text, true);
+	cout << "Encrypted text:" << endl;
+	cout << endl;
+	cout << text << endl;
+
+	
+	crypt(text, false);
+
+	cout << "Decrypted text ( checking method ): " << endl;
+	cout << endl;
+	cout << text << endl; 
+
+	return 0;
+}
