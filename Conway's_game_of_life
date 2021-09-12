@@ -1,0 +1,152 @@
+#include <iostream>
+#include <windows.h>
+#include <stdio.h>
+#include <time.h>
+#include <conio.h>
+
+using namespace std;
+
+const int _size = 20;
+
+
+class Game {
+private:
+	bool** game_field;
+
+public:
+
+	Game(bool a[_size][_size]) {
+		game_field = new bool*[_size];
+
+		for (int i = 0; i < _size; i++) {
+			game_field[i] = new bool[_size];
+			for (int j = 0; j < _size; j++) {
+				game_field[i][j] = a[i][j];
+			}
+		}
+	}
+	Game& transform() {
+		int count_cells;
+		bool** temp_array = new bool*[_size];
+		for (int i = 0; i < _size; i++) {
+			temp_array[i] = new bool[_size];
+			for (int j = 0; j < _size; j++) {
+				temp_array[i][j] = game_field[i][j];
+			}
+		}
+
+		for (int i = 0; i < _size; i++) {
+			for (int j = 0; j < _size; j++) {
+				count_cells = 0;
+
+				for (int k = -1; k < 2; k++) {
+					for (int m = -1; m < 2; m++) {
+						if (i + k < 0 || j + m < 0 || i + k >= _size || j + m >= _size) {
+							continue;
+						}
+						else {
+							if (game_field[i + k][j + m]) {
+								count_cells++;
+							}
+						}
+					}
+				}
+				
+
+				if (game_field[i][j]) {
+					count_cells--;
+					if (count_cells >= 0 && count_cells <= 1) {
+						temp_array[i][j] = false;
+					}
+					else if (count_cells >= 4 && count_cells < 9) {
+						temp_array[i][j] = false;
+					}
+				}
+				else {
+					switch (count_cells)
+					{
+					case 3: temp_array[i][j] = true;
+					}
+				}
+
+
+			}
+		}
+
+		for (int i = 0; i < _size; i++) {
+			for (int j = 0; j < _size; j++) {
+				game_field[i][j] = temp_array[i][j];
+			}
+		}
+
+			for (int i = 0; i < _size; i++) {
+				delete[] temp_array[i];
+			}
+			delete[] temp_array;
+			return *this;
+		
+	}
+	void print_field(){
+
+		cout << char(218);
+
+		for (int i = 0; i < _size; i++) {
+			cout << char(196);
+		}
+
+		cout << char(191) << endl;
+
+
+		for (int i = 0; i < _size; i++) {
+			cout << char(179);
+			for (int j = 0; j < _size; j++) {
+				if (game_field[i][j]) cout << char(219);
+				else cout << " ";
+			}
+			cout << char(179) << endl;
+		}
+
+
+		cout << char(192);
+
+		for (int i = 0; i < _size; i++) {
+			cout << char(196);
+		}
+		cout << char(217);
+	}
+	~Game() {
+		for (int i = 0; i < _size; i++) {
+			delete[] game_field[i];
+		}
+		delete[] game_field;
+	}
+};
+	
+
+int main()
+{
+	bool a[_size][_size];
+	int seed = (unsigned int)time(NULL);
+	srand(seed);
+
+	for (int i = 0; i < _size; i++) {
+		for (int j = 0; j < _size; j++)
+		{
+			a[i][j] = (rand()%10 >= 8);
+		}
+	}
+
+	Game game(a);
+	int k = 0;
+	while (true) {
+		game.print_field();
+		game.transform();
+		Sleep(1000);
+		if (_kbhit()) {
+			break;
+		}
+		system("cls");
+	}
+
+	return 0;
+}
